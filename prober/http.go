@@ -236,6 +236,7 @@ func (bc *byteCounter) Read(p []byte) (int, error) {
 var userAgentDefaultHeader = fmt.Sprintf("Blackbox Exporter/%s", version.Version)
 
 func ProbeHTTP(ctx context.Context, target string, module config.Module, registry *prometheus.Registry, logger log.Logger) (success bool) {
+	fmt.Printf("target:%s,module:%s,IPProtocol:%s \n", target, module.Prober, module.HTTP.IPProtocol)
 	var redirects int
 	var (
 		durationGaugeVec = prometheus.NewGaugeVec(prometheus.GaugeOpts{
