@@ -1,4 +1,3 @@
-ARG BASEIMAGE
 FROM golang:1.19 as builder
 ENV GOPATH /gopath/
 ENV PATH $GOPATH/bin/$PATH
@@ -12,8 +11,8 @@ WORKDIR /go/src/blackbox_exporter/
 
 RUN make build
 
-ARG BASEIMAGE
-FROM ${BASEIMAGE}
+
+FROM k8s.gcr.io/debian-base:v2.0.0
 
 COPY --from=builder /go/src/blackbox_exporter /
 
