@@ -1,12 +1,21 @@
-ARG ARCH="amd64"
-ARG OS="linux"
-FROM quay.io/prometheus/busybox-${OS}-${ARCH}:latest
-LABEL maintainer="The Prometheus Authors <prometheus-developers@googlegroups.com>"
+ARG BASEIMAGE
+FROM golang:1.19 as builder
+ENV GOPATH /gopath/
+ENV PATH $GOPATH/bin/$PATH
 
-ARG ARCH="amd64"
-ARG OS="linux"
-COPY .build/${OS}-${ARCH}/blackbox_exporter  /bin/blackbox_exporter
-COPY blackbox.yml       /etc/blackbox_exporter/config.yml
+RUN go version
+RUN  go env -w GOPROXY=https://goproxy.io,direct
+RUN  go env -w GO111MODULE=on
+
+COPY . /go/src/blackbox_exporter/
+WORKDIR /go/src/blackbox_exporter/
+
+RUN make build
+
+ARG BASEIMAGE
+FROM ${BASEIMAGE}
+
+COPY --from=builder /go/src/blackbox_exporter /
 
 EXPOSE      9115
 ENTRYPOINT  [ "/bin/blackbox_exporter" ]
