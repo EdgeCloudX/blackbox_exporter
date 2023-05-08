@@ -14,7 +14,7 @@ RUN make build
 
 FROM k8s.gcr.io/debian-base:v2.0.0
 
-COPY --from=builder /go/src/blackbox_exporter /
+COPY --from=builder /go/src/blackbox_exporter /bin/blackbox_exporter
 
 EXPOSE      9115
 ENTRYPOINT  [ "/bin/blackbox_exporter" ]
