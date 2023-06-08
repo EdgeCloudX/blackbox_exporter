@@ -127,24 +127,29 @@ func validRcode(rcode int, valid []string, logger log.Logger) bool {
 func ProbeDNS(ctx context.Context, target string, module config.Module, registry *prometheus.Registry, logger log.Logger) bool {
 	var dialProtocol string
 	probeDNSDurationGaugeVec := prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Name: "probe_dns_duration_seconds",
-		Help: "Duration of DNS request by phase",
+		Name:        "probe_dns_duration_seconds",
+		Help:        "Duration of DNS request by phase",
+		ConstLabels: map[string]string{"target": target},
 	}, []string{"phase"})
 	probeDNSAnswerRRSGauge := prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "probe_dns_answer_rrs",
-		Help: "Returns number of entries in the answer resource record list",
+		Name:        "probe_dns_answer_rrs",
+		Help:        "Returns number of entries in the answer resource record list",
+		ConstLabels: map[string]string{"target": target},
 	})
 	probeDNSAuthorityRRSGauge := prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "probe_dns_authority_rrs",
-		Help: "Returns number of entries in the authority resource record list",
+		Name:        "probe_dns_authority_rrs",
+		Help:        "Returns number of entries in the authority resource record list",
+		ConstLabels: map[string]string{"target": target},
 	})
 	probeDNSAdditionalRRSGauge := prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "probe_dns_additional_rrs",
-		Help: "Returns number of entries in the additional resource record list",
+		Name:        "probe_dns_additional_rrs",
+		Help:        "Returns number of entries in the additional resource record list",
+		ConstLabels: map[string]string{"target": target},
 	})
 	probeDNSQuerySucceeded := prometheus.NewGauge(prometheus.GaugeOpts{
-		Name: "probe_dns_query_succeeded",
-		Help: "Displays whether or not the query was executed successfully",
+		Name:        "probe_dns_query_succeeded",
+		Help:        "Displays whether or not the query was executed successfully",
+		ConstLabels: map[string]string{"target": target},
 	})
 
 	for _, lv := range []string{"resolve", "connect", "request"} {
@@ -283,8 +288,9 @@ func ProbeDNS(ctx context.Context, target string, module config.Module, registry
 
 	if qt == dns.TypeSOA {
 		probeDNSSOAGauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_dns_serial",
-			Help: "Returns the serial number of the zone",
+			Name:        "probe_dns_serial",
+			Help:        "Returns the serial number of the zone",
+			ConstLabels: map[string]string{"target": target},
 		})
 		registry.MustRegister(probeDNSSOAGauge)
 

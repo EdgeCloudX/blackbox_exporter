@@ -240,30 +240,36 @@ func ProbeHTTP(ctx context.Context, target string, module config.Module, registr
 	var redirects int
 	var (
 		durationGaugeVec = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "probe_http_duration_seconds",
-			Help: "Duration of http request by phase, summed over all redirects",
+			Name:        "probe_http_duration_seconds",
+			Help:        "Duration of http request by phase, summed over all redirects",
+			ConstLabels: map[string]string{"target": target},
 		}, []string{"phase"})
 		contentLengthGauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_http_content_length",
-			Help: "Length of http content response",
+			Name:        "probe_http_content_length",
+			Help:        "Length of http content response",
+			ConstLabels: map[string]string{"target": target},
 		})
 		bodyUncompressedLengthGauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_http_uncompressed_body_length",
-			Help: "Length of uncompressed response body",
+			Name:        "probe_http_uncompressed_body_length",
+			Help:        "Length of uncompressed response body",
+			ConstLabels: map[string]string{"target": target},
 		})
 		redirectsGauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_http_redirects",
-			Help: "The number of redirects",
+			Name:        "probe_http_redirects",
+			Help:        "The number of redirects",
+			ConstLabels: map[string]string{"target": target},
 		})
 
 		isSSLGauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_http_ssl",
-			Help: "Indicates if SSL was used for the final redirect",
+			Name:        "probe_http_ssl",
+			Help:        "Indicates if SSL was used for the final redirect",
+			ConstLabels: map[string]string{"target": target},
 		})
 
 		statusCodeGauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_http_status_code",
-			Help: "Response HTTP status code",
+			Name:        "probe_http_status_code",
+			Help:        "Response HTTP status code",
+			ConstLabels: map[string]string{"target": target},
 		})
 
 		probeSSLEarliestCertExpiryGauge = prometheus.NewGauge(sslEarliestCertExpiryGaugeOpts)
@@ -272,8 +278,9 @@ func ProbeHTTP(ctx context.Context, target string, module config.Module, registr
 
 		probeSSLLastInformation = prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
-				Name: "probe_ssl_last_chain_info",
-				Help: "Contains SSL leaf certificate information",
+				Name:        "probe_ssl_last_chain_info",
+				Help:        "Contains SSL leaf certificate information",
+				ConstLabels: map[string]string{"target": target},
 			},
 			[]string{"fingerprint_sha256", "subject", "issuer", "subjectalternative"},
 		)
@@ -284,18 +291,21 @@ func ProbeHTTP(ctx context.Context, target string, module config.Module, registr
 		)
 
 		probeHTTPVersionGauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_http_version",
-			Help: "Returns the version of HTTP of the probe response",
+			Name:        "probe_http_version",
+			Help:        "Returns the version of HTTP of the probe response",
+			ConstLabels: map[string]string{"target": target},
 		})
 
 		probeFailedDueToRegex = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_failed_due_to_regex",
-			Help: "Indicates if probe failed due to regex",
+			Name:        "probe_failed_due_to_regex",
+			Help:        "Indicates if probe failed due to regex",
+			ConstLabels: map[string]string{"target": target},
 		})
 
 		probeHTTPLastModified = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "probe_http_last_modified_timestamp_seconds",
-			Help: "Returns the Last-Modified HTTP response header in unixtime",
+			Name:        "probe_http_last_modified_timestamp_seconds",
+			Help:        "Returns the Last-Modified HTTP response header in unixtime",
+			ConstLabels: map[string]string{"target": target},
 		})
 	)
 
@@ -319,7 +329,6 @@ func ProbeHTTP(ctx context.Context, target string, module config.Module, registr
 		level.Error(logger).Log("msg", "Could not parse target URL", "err", err)
 		return false
 	}
-
 	targetHost := targetURL.Hostname()
 	targetPort := targetURL.Port()
 
@@ -636,7 +645,6 @@ func ProbeHTTP(ctx context.Context, target string, module config.Module, registr
 		}
 		durationGaugeVec.WithLabelValues("transfer").Add(trace.end.Sub(trace.responseStart).Seconds())
 	}
-
 	if resp.TLS != nil {
 		isSSLGauge.Set(float64(1))
 		registry.MustRegister(probeSSLEarliestCertExpiryGauge, probeTLSVersion, probeSSLLastChainExpiryTimestampSeconds, probeSSLLastInformation)
@@ -652,7 +660,6 @@ func ProbeHTTP(ctx context.Context, target string, module config.Module, registr
 		level.Error(logger).Log("msg", "Final request was not over SSL")
 		success = false
 	}
-
 	statusCodeGauge.Set(float64(resp.StatusCode))
 	contentLengthGauge.Set(float64(resp.ContentLength))
 	bodyUncompressedLengthGauge.Set(float64(respBodyBytes))
