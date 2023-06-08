@@ -1,7 +1,7 @@
 CGO_ENABLED:=0
 DOCKER_PLATFORMS=linux/arm64,linux/amd64
 REGISTRY?=cloudx2021
-TAG?=1.0.0
+TAG?=1.0.2
 IMAGE:=$(REGISTRY)/blackbox_exporter:$(TAG)
 BASEIMAGE:=k8s.gcr.io/debian-base:v2.0.0
 ifeq ($(ENABLE_JOURNALD), 1)
