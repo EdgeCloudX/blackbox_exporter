@@ -36,3 +36,11 @@
   "tcp_connect":
     "prober": "tcp"
     "tcp":
+      "preferred_ip_protocol": "ip4"
+  dns: # dns 检测模块
+    prober: dns
+    dns:
+      transport_protocol: "tcp"
+      preferred_ip_protocol: "ip4"
+      query_name: "kubernetes.default.svc.cloud.ctrm"  # 利用这个域名来检查 dns 服务器
+      query_type: "A"  # 如果是 kube-dns ，一定要加入这个
