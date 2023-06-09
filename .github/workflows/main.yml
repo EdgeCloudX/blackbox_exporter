@@ -32,5 +32,8 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-          echo $PASSWORD | docker login -u $USERNAME --password-stdin $REGISTR
+          echo $PASSWORD
+          echo $USERNAME
+          echo $REGISTRY
+          echo $PASSWORD | docker login -u $USERNAME --password-stdin $REGISTRY
           make package
