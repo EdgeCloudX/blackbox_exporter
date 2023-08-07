@@ -1,6 +1,6 @@
 CGO_ENABLED:=0
 DOCKER_PLATFORMS=linux/arm64,linux/amd64
-REGISTRY?=registry.eecos.cn:7443/ecf-edge/prometheus
+REGISTRY=registry.eecos.cn:7443/ecf-edge/prometheus
 TAG?=1.0.2
 IMAGE:=$(REGISTRY)/blackbox_exporter:$(TAG)
 BASEIMAGE:=k8s.gcr.io/debian-base:v2.0.0
